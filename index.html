@@ -33,7 +33,7 @@
     <button onclick="toggleLED()">LED umschalten</button>
     <div class="circle"></div>
     <script>
-        const ESP32_IP_ADDRESS = 'http://192.168.1.107'; // Ersetze dies durch die IP-Adresse deines ESP32
+        const ESP32_IP_ADDRESS = 'https://192.168.1.107'; // Ersetze dies durch die IP-Adresse deines ESP32
 
         function toggleLED() {
             fetch(`${ESP32_IP_ADDRESS}/toggle`)
