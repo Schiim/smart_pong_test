@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LED und Taster Steuerung</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        button {
+            padding: 20px;
+            font-size: 20px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: grey;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="toggleLED()">LED umschalten</button>
+    <div class="circle"></div>
+    <script>
+        const ESP32_IP_ADDRESS = 'http://192.168.1.107'; // Ersetze dies durch die IP-Adresse deines ESP32
+
+        function toggleLED() {
+            fetch(`${ESP32_IP_ADDRESS}/toggle`)
+                .then(response => response.text())
+                .then(state => {
+                    alert('LED ist jetzt ' + (state === 'on' ? 'AN' : 'AUS'));
+                });
+        }
+
+        function checkButton() {
+            fetch(`${ESP32_IP_ADDRESS}/button`)
+                .then(response => response.text())
+                .then(state => {
+                    document.querySelector('.circle').style.backgroundColor = state === 'pressed' ? 'green' : 'grey';
+                });
+        }
+
+        setInterval(checkButton, 100); // Überprüft den Tasterstatus alle 100 ms
+    </script>
+</body>
+</html>
