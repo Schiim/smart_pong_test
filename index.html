@@ -1,56 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ESP32 Control</title>
-  <style>
-    .circle {
-      height: 50px;
-      width: 50px;
-      background-color: red;
-      border-radius: 50%;
-      display: inline-block;
-    }
-    .active {
-      background-color: green;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LED Steuerung</title>
+    <script>
+        const esp32IpAddress = '192.168.1.107';  // Beispiel-IP-Adresse deines ESP32
+        const esp32Port = 80;  // Beispiel-Port für den WebSocket-Server
+
+        let socket;  // WebSocket-Verbindungsobjekt
+
+        function connectToESP32() {
+            socket = new WebSocket(`ws://${esp32IpAddress}:${esp32Port}`);
+
+            socket.onopen = function() {
+                console.log('Verbindung zum ESP32 hergestellt.');
+            };
+
+            socket.onerror = function(error) {
+                console.error('Fehler beim Verbinden zum ESP32:', error);
+            };
+
+            socket.onclose = function(event) {
+                console.log('Verbindung zum ESP32 geschlossen:', event);
+            };
+        }
+
+        function controlLED(status) {
+            if (socket.readyState === WebSocket.OPEN) {
+                const message = JSON.stringify({ command: 'led_control', status: status });
+                socket.send(message);
+                console.log('Nachricht an ESP32 gesendet:', message);
+            } else {
+                console.error('WebSocket-Verbindung nicht geöffnet.');
+            }
+        }
+
+        function turnOnLED() {
+            controlLED(true);
+        }
+
+        function turnOffLED() {
+            controlLED(false);
+        }
+
+        // Verbindung zum WebSocket-Server herstellen
+        connectToESP32();
+    </script>
 </head>
 <body>
-  <h1>ESP32 Control</h1>
-  <button onclick="toggleLED()">Toggle LED</button>
-  <div id="buttonStatus" class="circle"></div>
+    <h1>LED Steuerung</h1>
 
-  <script>
-    const ESP_IP = "192.168.1.107";
-    let ledState = false;
-
-    function toggleLED() {
-      const url = ledState ? `http://${ESP_IP}/led/off` : `http://${ESP_IP}/led/on`;
-      fetch(url)
-        .then(response => response.text())
-        .then(data => {
-          console.log(data);
-          ledState = !ledState;
-        });
-    }
-
-    function checkButtonStatus() {
-      fetch(`http://${ESP_IP}/button/status`)
-        .then(response => response.text())
-        .then(data => {
-          console.log(data);
-          const circle = document.getElementById("buttonStatus");
-          if (data.includes("Pressed")) {
-            circle.classList.add("active");
-          } else {
-            circle.classList.remove("active");
-          }
-        });
-    }
-
-    setInterval(checkButtonStatus, 1000);
-  </script>
+    <button onclick="turnOnLED()">LED einschalten</button>
+    <button onclick="turnOffLED()">LED ausschalten</button>
 </body>
 </html>
