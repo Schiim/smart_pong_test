@@ -17,7 +17,7 @@
 
         function controlLED() {
             if (!socket) {
-                socket = new WebSocket('ws://example.com/socket'); // Beispiel-URL anpassen
+                socket = new WebSocket('https://schiim.github.io/smart_pong_test'); // Beispiel-URL anpassen
                 socket.onopen = function(event) {
                     console.log('WebSocket opened');
                     // Hier kannst du optional Initialisierungsaktionen durchführen
