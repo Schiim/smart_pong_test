@@ -11,7 +11,7 @@
     <button onclick="turnOffLED()">LED ausschalten</button>
 
     <script>
-        const esp32Address = 'https://192.168.4.1'; // Setze hier die IP-Adresse deines ESP32 ein
+        const esp32Address = 'http://192.168.4.1'; // Setze hier die IP-Adresse deines ESP32 ein
 
         function toggleLED() {
             fetch(`${esp32Address}/toggleLED`)
