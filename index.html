@@ -1,57 +1,59 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LED Steuerung</title>
-    <script>
-        const esp32IpAddress = '192.168.1.107';  // Beispiel-IP-Adresse deines ESP32
-        const esp32Port = 80;  // Beispiel-Port für den WebSocket-Server
-
-        let socket;  // WebSocket-Verbindungsobjekt
-
-        function connectToESP32() {
-            socket = new WebSocket(`ws://${esp32IpAddress}:${esp32Port}`);
-
-            socket.onopen = function() {
-                console.log('Verbindung zum ESP32 hergestellt.');
-            };
-
-            socket.onerror = function(error) {
-                console.error('Fehler beim Verbinden zum ESP32:', error);
-            };
-
-            socket.onclose = function(event) {
-                console.log('Verbindung zum ESP32 geschlossen:', event);
-            };
+    <title>ESP32 Control Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
         }
-
-        function controlLED(status) {
-            if (socket.readyState === WebSocket.OPEN) {
-                const message = JSON.stringify({ command: 'led_control', status: status });
-                socket.send(message);
-                console.log('Nachricht an ESP32 gesendet:', message);
-            } else {
-                console.error('WebSocket-Verbindung nicht geöffnet.');
-            }
+        h1 {
+            color: #333;
         }
-
-        function turnOnLED() {
-            controlLED(true);
+        .container {
+            max-width: 600px;
+            margin: auto;
         }
-
-        function turnOffLED() {
-            controlLED(false);
+        .button {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
         }
-
-        // Verbindung zum WebSocket-Server herstellen
-        connectToESP32();
-    </script>
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <h1>LED Steuerung</h1>
+    <div class="container">
+        <h1>ESP32 Control Panel</h1>
+        <p>Control LED and Circle</p>
+        <button class="button" onclick="controlLED()">Toggle LED</button>
+        <button class="button" onclick="controlCircle()">Toggle Circle</button>
+    </div>
 
-    <button onclick="turnOnLED()">LED einschalten</button>
-    <button onclick="turnOffLED()">LED ausschalten</button>
+    <script>
+        function controlLED() {
+            // Hier kannst du Logik hinzufügen, um die LED zu steuern
+            console.log("Toggle LED button clicked");
+            // Optional: Du kannst hier auch eine AJAX-Anfrage senden, um die LED auf dem ESP32 zu steuern
+        }
+
+        function controlCircle() {
+            // Hier kannst du Logik hinzufügen, um den Kreis zu steuern
+            console.log("Toggle Circle button clicked");
+            // Optional: Du kannst hier auch eine AJAX-Anfrage senden, um den Kreis auf dem ESP32 zu steuern
+        }
+    </script>
 </body>
 </html>
