@@ -3,60 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket Beispiel</title>
+    <title>ESP32 LED Steuerung</title>
 </head>
 <body>
-    <h1>WebSocket Steuerung</h1>
-
-    <button onclick="controlLED()">LED steuern</button>
+    <h1>ESP32 LED Steuerung</h1>
+    <button onclick="toggleLED()">LED umschalten</button>
     <button onclick="turnOffLED()">LED ausschalten</button>
 
     <script>
-        var socket;
+        const esp32Address = '192.168.4.1'; // Setze hier die IP-Adresse deines ESP32 ein
 
-        function initializeWebSocket() {
-            socket = new WebSocket('wss://schiim.github.io/smart_pong_test'); // Ersetze dies durch deine tatsächliche WebSocket-URL
-
-            socket.onopen = function(event) {
-                console.log('WebSocket geöffnet');
-            };
-
-            socket.onmessage = function(event) {
-                console.log('Nachricht vom Server: ', event.data);
-            };
-
-            socket.onerror = function(error) {
-                console.error('WebSocket-Fehler: ', error);
-            };
-
-            socket.onclose = function(event) {
-                console.log('WebSocket geschlossen');
-                socket = null;
-            };
-        }
-
-        function controlLED() {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send('toggleLED');
-            } else {
-                console.warn('WebSocket ist nicht offen. Initialisiere WebSocket.');
-                initializeWebSocket();
-                socket.onopen = function(event) {
-                    socket.send('toggleLED');
-                };
-            }
+        function toggleLED() {
+            fetch(`${esp32Address}/toggleLED`)
+                .then(response => response.text())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error:', error));
         }
 
         function turnOffLED() {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send('turnOffLED');
-            } else {
-                console.warn('WebSocket ist nicht offen.');
-            }
+            fetch(`${esp32Address}/turnOffLED`)
+                .then(response => response.text())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error:', error));
         }
-
-        // WebSocket-Verbindung initialisieren, wenn die Seite geladen wird
-        window.onload = initializeWebSocket;
     </script>
 </body>
 </html>
