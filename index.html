@@ -15,7 +15,7 @@
         var socket;
 
         function initializeWebSocket() {
-            socket = new WebSocket('ws://schiim.github.io/smart_pong_test'); // Ersetze dies durch deine tatsächliche WebSocket-URL
+            socket = new WebSocket('wss://schiim.github.io/smart_pong_test'); // Ersetze dies durch deine tatsächliche WebSocket-URL
 
             socket.onopen = function(event) {
                 console.log('WebSocket geöffnet');
