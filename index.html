@@ -12,40 +12,51 @@
     <button onclick="turnOffLED()">LED ausschalten</button>
 
     <script>
-        // Hier fügst du den JavaScript-Code ein
         var socket;
 
+        function initializeWebSocket() {
+            socket = new WebSocket('ws://schiim.github.io/smart_pong_test'); // Ersetze dies durch deine tatsächliche WebSocket-URL
+
+            socket.onopen = function(event) {
+                console.log('WebSocket geöffnet');
+            };
+
+            socket.onmessage = function(event) {
+                console.log('Nachricht vom Server: ', event.data);
+            };
+
+            socket.onerror = function(error) {
+                console.error('WebSocket-Fehler: ', error);
+            };
+
+            socket.onclose = function(event) {
+                console.log('WebSocket geschlossen');
+                socket = null;
+            };
+        }
+
         function controlLED() {
-            if (!socket) {
-                socket = new WebSocket('ws://schiim.github.io/smart_pong_test'); // Beispiel-URL anpassen
-                socket.onopen = function(event) {
-                    console.log('WebSocket opened');
-                    // Hier kannst du optional Initialisierungsaktionen durchführen
-                };
-                socket.onmessage = function(event) {
-                    console.log('Message from server ', event.data);
-                    // Hier kannst du die Nachricht vom Server verarbeiten
-                };
-                socket.onerror = function(error) {
-                    console.error('WebSocket error: ', error);
-                };
-                socket.onclose = function(event) {
-                    console.log('WebSocket closed');
-                    socket = undefined;
-                };
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send('toggleLED');
             } else {
-                // WebSocket ist bereits geöffnet, hier kannst du Nachrichten senden
-                // Beispiel: socket.send('Toggle LED');
+                console.warn('WebSocket ist nicht offen. Initialisiere WebSocket.');
+                initializeWebSocket();
+                socket.onopen = function(event) {
+                    socket.send('toggleLED');
+                };
             }
         }
 
         function turnOffLED() {
-            if (socket) {
-                socket.close(); // Schließe die WebSocket-Verbindung
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send('turnOffLED');
             } else {
-                console.warn('WebSocket is not open');
+                console.warn('WebSocket ist nicht offen.');
             }
         }
+
+        // WebSocket-Verbindung initialisieren, wenn die Seite geladen wird
+        window.onload = initializeWebSocket;
     </script>
 </body>
 </html>
