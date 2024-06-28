@@ -1,58 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESP32 Control Panel</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1 {
-            color: #333;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-        }
-        .button {
-            display: inline-block;
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            font-size: 16px;
-            margin: 10px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-        }
-        .button:hover {
-            background-color: #45a049;
-        }
-    </style>
+    <title>WebSocket Beispiel</title>
 </head>
 <body>
-    <div class="container">
-        <h1>ESP32 Control Panel</h1>
-        <p>Control LED and Circle</p>
-        <button class="button" onclick="controlLED()">Toggle LED</button>
-        <button class="button" onclick="controlCircle()">Toggle Circle</button>
-    </div>
+    <h1>WebSocket Steuerung</h1>
+
+    <button onclick="controlLED()">LED steuern</button>
+    <button onclick="turnOffLED()">LED ausschalten</button>
 
     <script>
+        // Hier fügst du den JavaScript-Code ein
+        var socket;
+
         function controlLED() {
-            // Hier kannst du Logik hinzufügen, um die LED zu steuern
-            console.log("Toggle LED button clicked");
-            // Optional: Du kannst hier auch eine AJAX-Anfrage senden, um die LED auf dem ESP32 zu steuern
+            if (!socket) {
+                socket = new WebSocket('ws://example.com/socket'); // Beispiel-URL anpassen
+                socket.onopen = function(event) {
+                    console.log('WebSocket opened');
+                    // Hier kannst du optional Initialisierungsaktionen durchführen
+                };
+                socket.onmessage = function(event) {
+                    console.log('Message from server ', event.data);
+                    // Hier kannst du die Nachricht vom Server verarbeiten
+                };
+                socket.onerror = function(error) {
+                    console.error('WebSocket error: ', error);
+                };
+                socket.onclose = function(event) {
+                    console.log('WebSocket closed');
+                    socket = undefined;
+                };
+            } else {
+                // WebSocket ist bereits geöffnet, hier kannst du Nachrichten senden
+                // Beispiel: socket.send('Toggle LED');
+            }
         }
 
-        function controlCircle() {
-            // Hier kannst du Logik hinzufügen, um den Kreis zu steuern
-            console.log("Toggle Circle button clicked");
-            // Optional: Du kannst hier auch eine AJAX-Anfrage senden, um den Kreis auf dem ESP32 zu steuern
+        function turnOffLED() {
+            if (socket) {
+                socket.close(); // Schließe die WebSocket-Verbindung
+            } else {
+                console.warn('WebSocket is not open');
+            }
         }
     </script>
 </body>
